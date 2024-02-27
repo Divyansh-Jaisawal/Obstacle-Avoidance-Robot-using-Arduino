@@ -1,0 +1,60 @@
+#include <NewPing.h>
+
+// Define the pins connected to the ultrasonic sensor
+#define TRIGGER_PIN  2
+#define ECHO_PIN     3
+#define MAX_DISTANCE 200
+
+// Define the pins connected to the motor driver module
+const int motor1Pin1 = 4; // Motor 1 input 1
+const int motor1Pin2 = 5; // Motor 1 input 2
+const int motor2Pin1 = 6; // Motor 2 input 1
+const int motor2Pin2 = 7; // Motor 2 input 2
+
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
+
+void setup() {
+  pinMode(motor1Pin1, OUTPUT);
+  pinMode(motor1Pin2, OUTPUT);
+  pinMode(motor2Pin1, OUTPUT);
+  pinMode(motor2Pin2, OUTPUT);
+}
+
+void loop() {
+  int distance = readDistance();
+
+  // If an obstacle is detected within 20cm, turn right
+  if (distance < 20) {
+    turnRight();
+  } else {
+    // Otherwise, move forward
+    moveForward();
+  }
+}
+
+int readDistance() {
+  delay(50);                   // Wait 50ms between pings (about 20 pings/sec). 29ms should be the shortest delay between pings.
+  unsigned int distance = sonar.ping_cm(); // Send ping, get distance in cm.
+  return distance;
+}
+
+void moveForward() {
+  digitalWrite(motor1Pin1, HIGH);
+  digitalWrite(motor1Pin2, LOW);
+  digitalWrite(motor2Pin1, HIGH);
+  digitalWrite(motor2Pin2, LOW);
+}
+
+void turnRight() {
+  digitalWrite(motor1Pin1, HIGH);
+  digitalWrite(motor1Pin2, LOW);
+  digitalWrite(motor2Pin1, LOW);
+  digitalWrite(motor2Pin2, HIGH);
+}
+
+void stopRobot() {
+  digitalWrite(motor1Pin1, LOW);
+  digitalWrite(motor1Pin2, LOW);
+  digitalWrite(motor2Pin1, LOW);
+  digitalWrite(motor2Pin2, LOW);
+}
